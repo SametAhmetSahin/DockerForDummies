@@ -55,9 +55,72 @@ Eğer kurulumda herhangi bir sorun yoksa ilk başta <br>
 `Unable to find image 'hello-world:latest' locally` <br>
 çıktısını alırsınız, ve docker çalıştırmak istediğiniz imaj olan hello-world imajının son halini otomatik olarak indirir ve çalıştırır.<br>
 Çalıştırdığımız container komut satırına çalıştığını belirten bir çıktı yazdırır.<br>
+Artık istediğimiz docker imajını ve etiketini `sudo docker run imajismi:etiket` ile çalıştırabiliriz.<br>
+Hatta `sudo docker run --rm -it imajismi:etiket çalıştırılacakkomut` syntaxine uyulması durumunda interaktif terminaliniz bile olabilir.<br>
+### Çeşitli Temel Docker Komutları
+- **docker ps**<br>
+Docker containerlarını listelemeyi sağlar. Listelemekle kalmayıp bize, imaj ismi, çalıştırdığı komut, çalışma süresi, durumu, kullandığı portlar gibi faydalı bilgiler de sağlar.<br>
+Bu halinde sadece çalışan containerları listelerken -a bayrağı eklenirse tüm containerları listeler.<br>
+- **docker run**<br>
+En temel komutlarımızdan biri olan `run` komutu bir tane imajdan bir container çalıştırmamızı sağlar.<br>
+`docker run imajismi:etiket komut` şeklinde çalıştırılırsa containerda istenilen herhangi bir komut o komut containerda bulunduğu sürece çalıştırılabilir. Alabildiği bayraklar aşağıda bulunan Çeşitli Bayraklar başlığında incelenecektir.
+- **docker create**<br>
+`run` ile aynı işlevdedir, tek farkı `run` containerı hemen çalıştırırken `create`'in containerı hemen çalıştırmamasıdır.<br>
+- **docker start|stop**<br>
+`run` veya `create` ile oluşturulan bir containerın sırasıyla başlatılmasını (`docker start containerismi`) ya da durdurulmasını (`docker stop containerismi`) sağlar.<br>
+- **docker pull**<br>
+Ardından gelecek imaj ismi ve etiketini indirir ve saklar.<br>
+Kullanımı `docker pull imajismi:etiket` şeklindedir.<br>
+- **docker images**<br>
+Bilgisayarda bulunan (indirilmiş veya buildlenmiş) tüm imajları isimleriyle, etiketleriyle, idleriyle, oluşturulma zamanlarıyla ve boyutlarıyla beraber listeler.<br>
+Kullanımı `docker images` veya `docker image ls` şeklindedir.<br>
+- **docker rmi**<br>
+Belirtilen imajı siler.<br>
+Kullanımı `docker rmi imajismi:etiket` veya `docker rmi imajidsi` şeklindedir.<br>
+imajidsi `docker images komutu` ile elde edilebilir.<br>
+- **docker exec**<br>
+Çalışan bir containerda komut çalıştırmayı sağlar.<br>
+Kullanımı `docker exec containerismi komut` şeklindedir.<br>
+Çeşitli Bayraklar başlığında incelenecek çeşitli bayraklar alabilir.<br>
+- **docker rm**<br>
+Durmuş bir containerın silinmesini sağlar.<br>
+Kullanımı `docker rm containerismi` şeklindedir.<br>
+
+
+### Çeşitli Bayraklar
+Linux'taki aşağı yukarı her komutta olduğu gibi Docker'da da belli bayraklar bulunmaktadır ve bu bayraklar çok işe yarar şeyler olabilir. 
+- *--detach | -d*<br>
+`run` veya `exec` ile çalıştırılabilir, komutun arkaplanda çalıştırılmasını sağlarve terminali meşgul etmez.<br>
+- *--interactive| -i*<br>
+Bağlı olunmasa bile STDIN'i açık tutar, --tty | -t ile çok iyi arkadaşlardır ve genelde birlikte kullanılırlar.<br>
+- *--tty | -t*<br>
+Containerda çalıştırdığınız komut için sahte bir terminal oluşturur, --interactive ile çok iyi arkadaşlardır ve beraber kullanıldığı zaman containerda çalıştırılan bir komutu interaktif olarak (mesela başka bir kabuk) kullanmanızı sağlar.<br>
+- *--rm*<br>
+Containerın tek seferlik çalıştırılmasını, ardından yok edilmesini sağlar.<br>
+
+- *--publish | -p*<br>
+Kullanımı `-p hostportu:containerportu` şeklindedir.<br>
+Belirtilen container portu ile host portunun bağlanmasını sağlar. 80 portundan yayın yapan bir Nginx containerımız olduğunu düşünelim, ve biz bu Nginx'e kendi bilgisayarımızın 8081 portundan erişmek istiyoruz.<br>
+Containerı oluştururken `-p 8081:80` şeklinde bir atama yaparsak containerın 80 portunu bilgisayarımızın 8081 portuna bağlarız. Containerın ve içindeki web sunucusunun çalışmasının ardından http://localhost:8081 adresine giderek container içindeki Nginx'imizin 80 portuna gidebiliriz.<br>
+
+- *--volume | -v*<br>
+Kullanımı `docker run -v "yolyadavolume:/containerdaki/adres" ubuntu:focal` şeklindedir.
+Host ile container arasında yol veya volume paylaşımı yapılmasını sağlar. Bu sayede container'ın verileri container'ın silinme durumunda korunup daha sonra yeniden çalıştırılacak bir container'da kullanılabilir.<br>
+`/containerdaki/adres` her zaman tam bir yol olmalıdır.<br>
+Bunu gerçekleştirmenin yol ve volume paylaşımı olmak üzere iki yolu vardır.<br>
+  - Yol paylaşımı:<br>
+Containera yol paylaşmak için `yolyadavolume` yerine başında **/** olan tam bir yol (örn. `/srv/muazzamwebuygulamasi`) yazılmalıdır. Paylaşılan dizinlerde yapılan herhangi bir değişiklik anında diğer tarafa yansıtılır.
+  - Volume paylaşımı:<br>
+Containera volume paylaşmak için `yolyadavolume` yerine başında **/** olmayan bir kelime (örn. `muazzamwebuygulamasi-data`) yazılmalıdır.
+
+
 
 ## **Geliştirme**
-### Neden Uygulamamızı Dockerize Etmeliyiz
+### Neden Uygulamamızı Dockerize Etmeliyiz?
+"Ama benim bilgisayarımda çalışıyor" serzenişini yok etmek ve yazdığınız MuazzamUygulamanın başka bilgisayarlarda çalıştırmaya çalışırken ortam farklılıkları sebebiyle ortaya çıkan sıkıntıları tamamen ortadan kaldırmak için mesela.<br>
+Veya MuazzamUygulamamızın kurulumu için 10 milyor milyar adım çalıştırmak yerine sadece imajın olduğu bir container çalıştırılıp gerekli olan değişkenleri ortak bir konfigürasyon dosyası veya ortam değişkenleri yoluyla aktarabilip fiziğin doğasına aykırı bir şekilde hem zamandan hem de işten tasarruf etmek için de olabilir.<br>
+Veya yukarıda **Container ile Sanal Makinenin Farkı** başlığında bahsettiğim yatay genişletmeyi yeni containerlar başlatarak çok rahat yapabilmek içindir.<br>
+Belki de uygulamayı dockerlayınca havalı durur ve dockerlayamayan geliştiricilere hava atabilirsiniz, size kalmış.<br>
 
 ### Uygulama Dockerize Etme
 Bir uygulamayı Linux üzerinde dockerize etmek için öncelikle uygulamamızın Linuxta çalışıyor olması gerekiyor, bunun yanı sıra uygulamamızın ihtiyacı olan tüm kütüphanelerin bir listesini elimizde bulundurmalıyız. <br>
@@ -73,7 +136,7 @@ Dockerfile için gereken malzeme listesi:
 - Diğer minik detaylar
 - Bunların hepsini yazacak bir adet geliştirici (sen)
 
-![At Çizmek İçin Gerekenlar](https://pics.me.me/how-to-draw-a-horse-by-van-oktop-draw-2-63818650.png "At Çizmek İçin Gerekenler")
+![At Çizmek İçin Gerekenler](https://pics.me.me/how-to-draw-a-horse-by-van-oktop-draw-2-63818650.png "At Çizmek İçin Gerekenler")
 
 Dockerfile anatomisine gelecek olursak, aşağıda örnek bir Dockerfile bulunmaktadır:<br>
 ```
@@ -85,9 +148,10 @@ EXPOSE 8000
 
 CMD ["python3 -m http.server"]
 ```
+
 Python'ın HTTP sunucusunu çalıştıran bir imaj hazırlamak bu kadar basit. Her satırın ne yaptığına gelecek olursak:<br>
-**FROM** imajismi:sürüm<br>
-imajismi isimli imajın sürüm sürümünün bu imaj için baz alınmasını sağlar.<br> Herhangi bir imajın herhangi bir versiyonu olabilir, veya `FROM scratch` ile tamamen sıfırdan başlayabilirsiniz.<br>
+**FROM** imajismi:etiket<br>
+imajismi isimli imajın etiket etiketinin bu imaj için baz alınmasını sağlar.<br> Herhangi bir imajın herhangi bir versiyonu olabilir, veya `FROM scratch` ile tamamen sıfırdan başlayabilirsiniz.<br>
 **RUN** komut<br>
 İmaj hazırlanırken bir komut çalıştırmanızı sağlar. Komutları mümkün olduğunca && kullanarak (komutların zincirleme çalıştırılmasını sağlar) tek satırda yazmaya dikkat edilmelidir. Bunun sebebi Docker'ın imaj oluştururken her bir talimatta farklı katman oluşturmasıdır, talimat sayısı azaltılarak imaj boyutu da azaltılır.<br>
 **EXPOSE** portnumarası<br>
@@ -97,7 +161,7 @@ Container çalıştırıldığı zaman çalıştırılacak komutları belirtir.<
 
 **Örneğin incelenmesi**
 - FROM ubuntu:focal<br>
-Ubuntu imajının focal sürümünü baz alır, bu sayede apt ile paket kurabiliriz.<br>
+Ubuntu imajının focal etiketini baz alır, bu sayede apt ile paket kurabiliriz.<br>
 - RUN<br>
 `apt update` ile repoları günceller (ki sıfır imaj olduğu için bu gerekli yoksa paket ismi bulamaz), `apt install python3` ile python3 paketini kurar, `apt autoclean` ile indirdiği paketlerin kurulum dosyalarını temizler ki imaj boyutu küçülsün. `&&` ile komutları zincirler, `komut1 && komut2` ile zincirlenmiş iki komutta ilk komutun bitmesinin ardından ikinci komut çalışır.<br>
 - EXPOSE<br>
